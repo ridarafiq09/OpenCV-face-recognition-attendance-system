@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Attendance Records</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="navbar">
+    <h2>Attendance Records</h2>
+    <a href="/">Back to Dashboard</a>
+</div>
+
+<div class="container">
+    <h1>Attendance Table</h1>
+
+    {% if records %}
+    <table style="width:100%; border-collapse: collapse; margin-top: 20px;">
+        <tr style="background:#1e3c72; color:white;">
+            <th style="padding:12px;">Name</th>
+            <th style="padding:12px;">Date</th>
+            <th style="padding:12px;">Time</th>
+        </tr>
+
+        {% for row in records %}
+        <tr style="background:white; border-bottom:1px solid #ddd;">
+            <td style="padding:10px;">{{ row[0] }}</td>
+            <td style="padding:10px;">{{ row[1] }}</td>
+            <td style="padding:10px;">{{ row[2] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+        <p>No attendance records found.</p>
+    {% endif %}
+</div>
+
+</body>
+</html>

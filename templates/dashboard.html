@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Digital Attendance</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="nav-left">
+    <h2>Digital Attendance</h2>
+  </div>
+
+  <div class="nav-right">
+    <button class="nav-btn" onclick="openModal()">Register Student</button>
+    <a href="/attendance" class="nav-btn">Start Attendance</a>
+    
+<a href="/stop_attendance" class="nav-btn" style="background:#dc2626;">
+  Stop Attendance
+</a>
+
+    <a href="/records" class="nav-btn">Attendance Records</a>
+  </div>
+</div>
+
+<!-- REGISTER MODAL -->
+<div id="studentModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+
+    <h3>Register New Student</h3>
+
+    <form method="POST" action="/add_student">
+      <input
+        type="text"
+        name="student_name"
+        placeholder="Enter student name"
+        required
+      />
+      <button type="submit" class="primary-btn">
+        Start Face Capture
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- FLASH MESSAGES -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, msg in messages %}
+      <div class="alert {{ category }}">{{ msg }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+
+<div class="container">
+  <h1>Digital Face-Recognition Attendance System</h1>
+  <p>AI-powered attendance using facial recognition.</p>
+
+  <p style="text-align:center; color:#16a34a; font-weight:600; margin-top:15px;">
+    ● Live attendance updating
+  </p>
+
+  <!-- EVERYTHING BELOW AUTO-REFRESHES -->
+  <div id="live-dashboard">
+
+    <!-- STATS CARDS -->
+    <div class="cards">
+      <div class="card">
+        👥 <br>
+        <strong>Total Students</strong><br>
+        {{ students }}
+      </div>
+
+      <div class="card">
+        📋 <br>
+        <strong>Total Attendance</strong><br>
+        {{ total_attendance }}
+      </div>
+
+      <div class="card">
+        📅 <br>
+        <strong>Today’s Attendance</strong><br>
+        {{ today_attendance }}
+      </div>
+    </div>
+
+    <!-- RECENT ATTENDANCE -->
+    <h2 style="margin-top:50px;">Recent Attendance</h2>
+
+    {% if recent_records %}
+    <table style="width:100%; margin-top:15px; background:white; border-radius:10px; overflow:hidden;">
+        <tr style="background:#1e3a6d; color:white;">
+            <th style="padding:12px;">Name</th>
+            <th style="padding:12px;">Date</th>
+            <th style="padding:12px;">Time</th>
+        </tr>
+
+        {% for r in recent_records %}
+        <tr>
+            <td style="padding:10px;">{{ r[0] }}</td>
+            <td style="padding:10px;">{{ r[1] }}</td>
+            <td style="padding:10px;">{{ r[2] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+      <p>No attendance recorded yet.</p>
+    {% endif %}
+
+  </div>
+</div>
+
+<!-- AUTO-REFRESH DASHBOARD DATA -->
+<script>
+  setInterval(() => {
+    fetch("/")
+      .then(res => res.text())
+      .then(html => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, "text/html");
+        document.getElementById("live-dashboard").innerHTML =
+          doc.getElementById("live-dashboard").innerHTML;
+      });
+  }, 5000);
+</script>
+
+</body>
+</html>

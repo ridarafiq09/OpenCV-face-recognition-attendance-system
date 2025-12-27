@@ -1,0 +1,7 @@
+venv/
+known_faces/
+attendance.csv
+encodings.pkl
+*.dat
+__pycache__/
+*.pyc

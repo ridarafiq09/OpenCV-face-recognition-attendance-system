@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Attendance Records</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="nav-left">
+    <h2>Digital Attendance</h2>
+  </div>
+  <div class="nav-right">
+    <a href="/" class="nav-btn">Dashboard</a>
+    <a href="/attendance" class="nav-btn">Start Attendance</a>
+  </div>
+</div>
+
+<h2 class="section-title">Attendance Records</h2>
+<p style="text-align:center;color:#555;">
+  This page updates automatically every 5 seconds
+</p>
+
+<!-- SUMMARY CARDS -->
+<div class="cards" style="grid-template-columns: repeat(2, 1fr); max-width:700px; margin:auto;">
+  <div class="card">
+    Total Records<br>
+    {{ records|length }}
+  </div>
+  <div class="card">
+    Latest Entry<br>
+    {% if records %}
+      {{ records[-1].name }}
+    {% else %}
+      —
+    {% endif %}
+  </div>
+</div>
+
+<!-- SEARCH -->
+<div style="width:90%; margin:30px auto; text-align:right;">
+  <input
+    type="text"
+    id="search"
+    placeholder="Search name..."
+    style="padding:8px 12px;border-radius:6px;border:1px solid #ccc;"
+    onkeyup="filterTable()"
+  >
+</div>
+
+<!-- TABLE -->
+<div class="table-container">
+  <table class="attendance-table" id="attendanceTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Date</th>
+        <th>Time</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% if records %}
+        {% for r in records %}
+        <tr>
+          <td>{{ r.name }}</td>
+          <td>{{ r.date }}</td>
+          <td>{{ r.time }}</td>
+        </tr>
+        {% endfor %}
+      {% else %}
+        <tr>
+          <td colspan="3" style="padding:20px;color:#777;">
+            No attendance records yet
+          </td>
+        </tr>
+      {% endif %}
+    </tbody>
+  </table>
+</div>
+
+<!-- AUTO REFRESH -->
+<script>
+  setInterval(() => {
+    location.reload();
+  }, 5000);
+</script>
+
+<!-- SEARCH FILTER -->
+<script>
+function filterTable() {
+  const input = document.getElementById("search").value.toLowerCase();
+  const rows = document.querySelectorAll("#attendanceTable tbody tr");
+
+  rows.forEach(row => {
+    const name = row.cells[0].innerText.toLowerCase();
+    row.style.display = name.includes(input) ? "" : "none";
+  });
+}
+</script>
+
+</body>
+</html>
