@@ -65,7 +65,7 @@ while True:
             confidence = int((1 - distances[best]) * 100)
             mark_attendance(name)
 
-        # ALWAYS GREEN if recognized
+        
         color = (0, 255, 0) if name != "Unknown" else (0, 0, 255)
 
         cv2.rectangle(frame, (left, top), (right, bottom), color, 2)

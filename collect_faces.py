@@ -3,11 +3,6 @@ import os
 import time
 import sys
 
-# -------------------------------------------------
-# GET STUDENT NAME
-# -------------------------------------------------
-# If name is passed from Flask → use it
-# Else fallback to terminal input (manual run)
 if len(sys.argv) >= 2 and sys.argv[1].strip():
     name = sys.argv[1].strip()
 else:
@@ -17,31 +12,21 @@ if not name:
     print("No name provided. Exiting.")
     exit()
 
-# -------------------------------------------------
-# CREATE SAVE DIRECTORY
-# -------------------------------------------------
+
 save_dir = os.path.join("known_faces", name)
 os.makedirs(save_dir, exist_ok=True)
 
-# -------------------------------------------------
-# CAMERA SETUP (Windows-friendly)
-# -------------------------------------------------
+
 cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 
 if not cap.isOpened():
     print("Error: Could not open camera.")
     exit()
 
-# -------------------------------------------------
-# FACE DETECTOR
-# -------------------------------------------------
 face_cascade = cv2.CascadeClassifier(
     cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
 )
 
-# -------------------------------------------------
-# CAPTURE SETTINGS
-# -------------------------------------------------
 count = 0
 max_images = 40
 last_save_time = 0
@@ -49,9 +34,7 @@ save_interval = 0.25  # seconds between saves
 
 print(f"Capturing for: {name}  |  Press Q to quit early")
 
-# -------------------------------------------------
-# MAIN LOOP
-# -------------------------------------------------
+
 while True:
     ret, frame = cap.read()
     if not ret:
@@ -94,7 +77,7 @@ while True:
             count += 1
             last_save_time = now
 
-    # Display text
+    
     cv2.putText(
         frame,
         f"{name}  Saved: {count}/{max_images}",
@@ -107,15 +90,13 @@ while True:
 
     cv2.imshow("Collect Faces", frame)
 
-    # Exit conditions
+   
     if cv2.waitKey(1) & 0xFF == ord("q"):
         break
     if count >= max_images:
         break
 
-# -------------------------------------------------
-# CLEANUP
-# -------------------------------------------------
+
 cap.release()
 cv2.destroyAllWindows()
 

@@ -20,7 +20,7 @@ app.secret_key = "attendance-secret"
 attendance_process = None  # prevent multiple attendance runs
 
 
-# ================= DASHBOARD =================
+
 @app.route("/")
 def dashboard():
     # ---- Total students ----
@@ -43,7 +43,7 @@ def dashboard():
     if os.path.exists(csv_path):
         with open(csv_path, newline="") as f:
             reader = csv.reader(f)
-            next(reader, None)  # skip header
+            next(reader, None) 
             rows = list(reader)
 
             total_attendance = len(rows)
@@ -59,7 +59,7 @@ def dashboard():
     )
 
 
-# ================= REGISTER STUDENT =================
+
 @app.route("/add_student", methods=["POST"])
 def add_student():
     name = request.form.get("student_name")
@@ -68,14 +68,14 @@ def add_student():
         flash("Student name is required!", "error")
         return redirect(url_for("dashboard"))
 
-    # Capture faces (WAIT until done)
+   
     subprocess.run([
         sys.executable,
         os.path.join(BASE_DIR, "collect_faces.py"),
         name
     ])
 
-    # Retrain model
+
     subprocess.run([
         sys.executable,
         os.path.join(BASE_DIR, "train_faces.py")
@@ -85,7 +85,7 @@ def add_student():
     return redirect(url_for("dashboard"))
 
 
-# ================= START ATTENDANCE =================
+
 @app.route("/attendance")
 def attendance():
     global attendance_process
@@ -115,7 +115,6 @@ def stop_attendance():
 
 
 
-# ================= RECORDS PAGE =================
 @app.route("/records")
 def records():
     records = []
@@ -135,6 +134,6 @@ def records():
     return render_template("records.html", records=records)
 
 
-# ================= RUN APP =================
+
 if __name__ == "__main__":
     app.run(debug=True)
